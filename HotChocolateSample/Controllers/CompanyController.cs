@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using GraphQL.Client.Http;
+using GraphQL.Client.Serializer.Newtonsoft;
 using HotChocolateSample.Core;
 using HotChocolateSample.GraphQL;
 using Newtonsoft.Json.Linq;
@@ -65,7 +67,6 @@ namespace HotChocolateSample.Controllers
         public async Task<ActionResult> Create(IFormCollection collection)
         {
             string mutation = $@"
-                query:
                 mutation {{
                     createCompany(inputCompany: {{
                         name: ""{collection["name"]}"",
@@ -79,12 +80,9 @@ namespace HotChocolateSample.Controllers
                 }}
             ";
 
-            HttpClient client = new HttpClient();
-            
-            var result = await client.SendAsync(new HttpRequestMessage()
-            {
-                Content = new StringContent(mutation),Method = HttpMethod.Post,RequestUri = new Uri(BackEndConstants.GraphQLUrl)
-            });
+            GraphQLHttpClient client = new GraphQLHttpClient(BackEndConstants.GraphQLUrl,new NewtonsoftJsonSerializer());
+            GraphQLHttpRequest request = new GraphQLHttpRequest(mutation);
+            await client.SendMutationAsync<Company>(request);
 
             try
             {

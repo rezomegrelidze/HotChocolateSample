@@ -29,7 +29,9 @@ namespace HotChocolateSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CompanyDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            
 
             services.AddScoped<ICompanyService, CompanyService>();
 
@@ -44,6 +46,11 @@ namespace HotChocolateSample
 
 
             services.AddControllersWithViews();
+        }
+
+        private void InitializeDb()
+        {
+            throw new NotImplementedException();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +78,7 @@ namespace HotChocolateSample
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Company}/{action=Index}/{id?}");
 
                 endpoints.MapGraphQL();
             });
