@@ -43,7 +43,7 @@ namespace HotChocolateSample.GraphQL
             }
         }
         */
-
+        //test
         public Company DeleteCompany(DeleteCompanyInput inputCompany)
         {
             return _companyService.Delete(inputCompany);
