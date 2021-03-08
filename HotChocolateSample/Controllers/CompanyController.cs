@@ -116,16 +116,34 @@ namespace HotChocolateSample.Controllers
         }
 
         // GET: Company/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            await DeletePost(id);
+            return RedirectToAction("Index");
         }
 
         // POST: Company/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeletePost(int id)
         {
+            string mutation = @$"
+                        mutation {{
+                            deleteCompany(inputCompany: {{
+                                id: {id}
+                            }})
+                            {{
+                                id
+                                    name
+                                revenue
+                            }}
+                        }}
+            ";
+
+            GraphQLHttpClient client = new GraphQLHttpClient(BackEndConstants.GraphQLUrl, new NewtonsoftJsonSerializer());
+            GraphQLHttpRequest request = new GraphQLHttpRequest(mutation);
+            await client.SendMutationAsync<Company>(request);
+
             try
             {
                 return RedirectToAction(nameof(Index));
