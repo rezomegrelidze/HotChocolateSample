@@ -47,6 +47,15 @@ namespace HotChocolateSample.Controllers
             return View(companies);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Query()
+        {
+            var query = await new System.IO.StreamReader(Request.Body).ReadToEndAsync(); // gets the body string
+            HttpClient client = new HttpClient { BaseAddress = new Uri(BackEndConstants.GraphQLUrl) };
+            var response = await client.GetStringAsync($"?query={query}");
+            return Json(response);
+        }
+
         // GET: Company/Details/5
         public ActionResult Details(int id)
         {
